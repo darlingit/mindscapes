@@ -129,3 +129,73 @@ h6 {
   color: inherit;
 }
 
+.folders {
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.folders::-webkit-scrollbar {
+  display: none;
+}
+
+.folder-item {
+  background-color: var(--card-bg-color);
+  min-height: 90px;
+  min-width: 200px;
+  margin-right: 6rem;
+}
+
+.icon {
+  background-color: var(--accent-color);
+}
+
+.sessions {
+  border-collapse: separate;
+  border-spacing: 0 1.5rem;
+}
+/*.session {*/
+/*    background-color: var(--card-bg-color);*/
+/*}*/
+
+/*.session .cell {*/
+/*    padding: 1rem;*/
+/*}*/
+
+.option-button {
+  padding-left: 1.7rem!important;
+  width: 60px;
+  color: var(--card-bg-color);
+  background-color: var(--accent-color);
+}
+
+.table td {
+  padding: 1rem;
+}
+.table tr th, .table tr td{
+  border: none;
+}
+
+.table thead th {
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+}
+
+.table tbody tr {
+  background-color: var(--card-bg-color);
+}
+
+.sky-button {
+  /*font-weight: 700;*/
+  border-radius: 0;
+  font-size: 1rem;
+  color: var(--card-bg-color);
+  background-color: var(--accent-color);
+  padding: 1rem 2.5rem;
+  transition: 0.3s;
+}
+
+.sky-button:hover {
+  background-color: var(--hover-color);
+}
