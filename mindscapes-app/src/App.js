@@ -8,8 +8,6 @@ import UploadPage from "./pages/UploadPage"
 import Sidebar from "./components/Sidebar";
 
 class App extends React.Component {
-
-
     render() {
         return (
             <Container fluid>
