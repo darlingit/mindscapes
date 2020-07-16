@@ -7,6 +7,7 @@ import GalleryPage from "./pages/GalleryPage"
 import UploadPage from "./pages/UploadPage"
 import Sidebar from "./components/Sidebar";
 import FolderPage from "./pages/FolderPage";
+import SessionPage from "./pages/SessionPage";
 
 class App extends React.Component {
     render() {
@@ -22,6 +23,7 @@ class App extends React.Component {
                                 <Route path="/gallery" component={GalleryPage} exact/>
                                 <Route path="/upload" component={UploadPage}/>
                                 <Route path="/gallery/folder/:folderName" component={FolderPage}/>
+                                <Route path="/gallery/session/:sessionName" component={SessionPage}/>
                                 {/*<Route path="/articles-list" component={ExplorePage} />*/}
                             </Switch>
                         </main>

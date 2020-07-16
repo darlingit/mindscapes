@@ -11,9 +11,9 @@ class FolderPage extends React.Component {
 
                 <div className="content p-3">
                     <div className="folder d-flex">
-                        <div className="mr-auto d-flex mt-3">
-                            <div className="icon d-flex mr-2"><i className="far fa-folder fa-lg my-auto"/></div>
-                            <h3 className="my-auto">{this.props.match.params.folderName}</h3>
+                        <div className="mr-auto d-flex mt-3 my-auto">
+                            <div className="icon d-flex mr-2  py-3"><i className="far fa-folder fa-lg my-auto"/></div>
+                            <h3 className="my-auto">{this.props.location.customProps.name}</h3>
                         </div>
                         <div className="option-button my-auto">
                             <i className="fas fa-ellipsis-v fa-md"/>
@@ -21,7 +21,7 @@ class FolderPage extends React.Component {
 
                     </div>
 
-                    <div className="p-3">
+                    <div className="p-3 w-95">
                         <SessionsTable />
                     </div>
                 </div>

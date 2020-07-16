@@ -52,6 +52,10 @@ h6 {
   margin-top: 7rem!important;
 }
 
+.w-95 {
+  width: 95%;
+}
+
 .hidden {
   display: none;
 }
@@ -193,6 +197,15 @@ h6 {
   background-color: var(--card-bg-color);
 }
 
+td a {
+  color: var(--main-text-color);
+}
+
+td a:hover {
+  color: var(--main-text-color);
+}
+
+
 .btn {
   border-radius: 0;
   font-size: 1rem;
@@ -274,4 +287,22 @@ h2.folder {
 .folder .option-button {
   color: var(--main-text-color);
   background-color: transparent;
+}
+
+.card {
+  margin-bottom: 3rem;
+  border-radius: 0;
+  border: none;
+  background-color: var(--card-bg-color);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.btn-edit {
+  padding: 1rem;
+  text-align: center;
+  color: var(--card-bg-color);
+  background-color: var(--accent-color);
 }

@@ -12,11 +12,11 @@ class GalleryPage extends React.Component {
                 <div className="content p-3">
                     <h3 className="mt-3">Folders</h3>
                     <div className="folders d-flex mt-4">
-                        <Folder name={"Folder A"} info={"234 files"} />
-                        <Folder name={"Folder B"} info={"2 files"} />
-                        <Folder name={"Folder C"} info={"10 files"} />
-                        <Folder name={"Folder D"} info={"15 files"} />
-                        <Folder name={"Folder E"} info={"2 files"} />
+                        <Folder folderName={"Folder A"} info={"234 files"} />
+                        <Folder folderName={"Folder B"} info={"2 files"} />
+                        <Folder folderName={"Folder C"} info={"10 files"} />
+                        <Folder folderName={"Folder D"} info={"15 files"} />
+                        <Folder folderName={"Folder E"} info={"2 files"} />
                     </div>
 
                     <h3 className="mt-6">Sessions</h3>
