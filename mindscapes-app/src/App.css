@@ -17,6 +17,10 @@ body {
   font-size: .875rem;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 h1, h2, h3 {
   font-family: 'Lato', sans-serif;
 }
@@ -248,4 +252,26 @@ label.btn-upload {
   color: var(--main-text-color);
   text-transform: uppercase;
   border: 1px solid var(--main-text-color);
+}
+
+a.folder-item {
+  color: var(--main-text-color);
+}
+
+a.folder-item:hover {
+  color: var(--main-text-color);
+}
+
+h2.folder {
+  color: var(--secondary-text-color);
+}
+
+.folder .icon {
+  color: var(--main-text-color);
+  background-color: transparent;
+}
+
+.folder .option-button {
+  color: var(--main-text-color);
+  background-color: transparent;
 }

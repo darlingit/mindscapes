@@ -6,6 +6,7 @@ import './App.css';
 import GalleryPage from "./pages/GalleryPage"
 import UploadPage from "./pages/UploadPage"
 import Sidebar from "./components/Sidebar";
+import FolderPage from "./pages/FolderPage";
 
 class App extends React.Component {
     render() {
@@ -18,8 +19,9 @@ class App extends React.Component {
                     <Col md={9} lg={10} id="page-content-wrapper">
                         <main role="main" className="ml-sm-auto p-6">
                             <Switch>
-                                <Route path="/" component={GalleryPage} exact/>
+                                <Route path="/gallery" component={GalleryPage} exact/>
                                 <Route path="/upload" component={UploadPage}/>
+                                <Route path="/gallery/folder/:folderName" component={FolderPage}/>
                                 {/*<Route path="/articles-list" component={ExplorePage} />*/}
                             </Switch>
                         </main>

@@ -10,7 +10,7 @@ class Sidebar extends React.Component {
                     <h3>Mindscapes</h3>
                     <Nav className="nav flex-column" activeKey={this.props.location.pathname}>
                         <Nav.Item>
-                            <Nav.Link as={Link} to="/" eventKey={"/"}>
+                            <Nav.Link as={Link} to="/gallery" eventKey={"/gallery"}>
                                 <i className="far fa-images fa-lg feather"/>
                                 Gallery
                             </Nav.Link>
