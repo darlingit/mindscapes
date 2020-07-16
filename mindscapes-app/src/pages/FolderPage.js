@@ -13,7 +13,7 @@ class FolderPage extends React.Component {
                     <div className="folder d-flex">
                         <div className="mr-auto d-flex mt-3">
                             <div className="icon d-flex mr-2"><i className="far fa-folder fa-lg my-auto"/></div>
-                            <h3 className="my-auto">Folder B</h3>
+                            <h3 className="my-auto">{this.props.match.params.folderName}</h3>
                         </div>
                         <div className="option-button my-auto">
                             <i className="fas fa-ellipsis-v fa-md"/>
