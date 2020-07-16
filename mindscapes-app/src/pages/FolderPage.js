@@ -1,14 +1,13 @@
 import React from "react";
 import SessionsTable from "../components/SessionsTable";
+import {Redirect} from "react-router-dom";
 
 class FolderPage extends React.Component {
-    render() {
-        return (
-            <>
-                <div className="pt-2 pb-2 mb-3">
-                    <h2 className="folder">Uploaded sessions</h2>
-                </div>
-
+    renderRedirect = () => {
+        if (!this.props.location.customProps) {
+            return <Redirect to='/gallery' />
+        } else {
+            return (
                 <div className="content p-3">
                     <div className="folder d-flex">
                         <div className="mr-auto d-flex mt-3 my-auto">
@@ -25,6 +24,17 @@ class FolderPage extends React.Component {
                         <SessionsTable />
                     </div>
                 </div>
+            );
+        }
+    }
+
+    render() {
+        return (
+            <>
+                <div className="pt-2 pb-2 mb-3">
+                    <h2 className="folder">Uploaded sessions</h2>
+                </div>
+                {this.renderRedirect()}
             </>
         );
 
