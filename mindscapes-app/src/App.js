@@ -24,7 +24,7 @@ class App extends React.Component {
                                 <Route path="/upload" component={UploadPage}/>
                                 <Route path="/gallery/folder/:folderName" component={FolderPage}/>
                                 <Route path="/gallery/session/:sessionName" component={SessionPage}/>
-                                {/*<Route path="/articles-list" component={ExplorePage} />*/}
+                                {/*<Route path="/" component={ExplorePage} />*/}
                             </Switch>
                         </main>
                     </Col>

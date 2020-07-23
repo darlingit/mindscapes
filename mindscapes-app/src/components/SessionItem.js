@@ -3,11 +3,7 @@ import {Link} from "react-router-dom";
 
 class SessionItem extends React.Component {
     render() {
-        const item = {
-            name: this.props.sessionName,
-            date: this.props.dateUploaded,
-            parent: this.props.parentFolder,
-        }
+        const item = this.props.session;
         return (
             <tr>
                 <td>
@@ -19,8 +15,8 @@ class SessionItem extends React.Component {
                         {item.name}
                     </Link>
                 </td>
-                <td>{item.date}</td>
-                <td>/{item.parent}</td>
+                <td>{item.uploaded}</td>
+                {/*<td>/{item.parent}</td>*/}
                 <td className="option-button"><i className="fas fa-ellipsis-v fa-md"/></td>
             </tr>
         );

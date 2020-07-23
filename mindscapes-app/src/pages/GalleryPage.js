@@ -10,14 +10,14 @@ class GalleryPage extends React.Component {
                     <h2>Uploaded sessions</h2>
                 </div>
                 <div className="content p-3">
-                    <h3 className="mt-3">Folders</h3>
-                    <div className="folders d-flex mt-4">
-                        <Folder folderName={"Folder A"} info={"234 files"} />
-                        <Folder folderName={"Folder B"} info={"2 files"} />
-                        <Folder folderName={"Folder C"} info={"10 files"} />
-                        <Folder folderName={"Folder D"} info={"15 files"} />
-                        <Folder folderName={"Folder E"} info={"2 files"} />
-                    </div>
+                    {/*<h3 className="mt-3">Folders</h3>*/}
+                    {/*<div className="folders d-flex mt-4">*/}
+                    {/*    <Folder folderName={"Folder A"} info={"234 files"} />*/}
+                    {/*    <Folder folderName={"Folder B"} info={"2 files"} />*/}
+                    {/*    <Folder folderName={"Folder C"} info={"10 files"} />*/}
+                    {/*    <Folder folderName={"Folder D"} info={"15 files"} />*/}
+                    {/*    <Folder folderName={"Folder E"} info={"2 files"} />*/}
+                    {/*</div>*/}
 
                     <h3 className="mt-6">Sessions</h3>
                     <SessionsTable />

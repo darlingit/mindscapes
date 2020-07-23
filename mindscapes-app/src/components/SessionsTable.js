@@ -1,7 +1,53 @@
 import React from "react";
 import SessionItem from "./SessionItem";
+import {getAllSessions} from "../api/sessions";
 
 class SessionsTable extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isLoading: true,
+            items: [],
+        }
+
+        this.getData = this.getData.bind(this);
+    }
+
+    async componentDidMount() {
+        await this.getData();
+    }
+
+    async getData() {
+        try {
+            const sessions = await getAllSessions();
+            this.setState({
+                items: sessions,
+                isLoading: false,
+            })
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    handleItems(items) {
+        let components = [];
+        if (!this.state.isLoading) {
+            items.map((element, index) =>
+                components.push(
+                    <SessionItem
+                        key={index}
+                        session={element}
+                    />
+                )
+            );
+        }
+        return components;
+    }
+
+
     render() {
         return (
             <table className="table sessions mt-4">
@@ -14,9 +60,7 @@ class SessionsTable extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                <SessionItem sessionName={"Session 634"} dateUploaded={"12 June 2020"} parentFolder={"Folder B"}/>
-                <SessionItem sessionName={"Session 633"} dateUploaded={"10 June 2020"} parentFolder={"Folder B"}/>
-                <SessionItem sessionName={"Session 632"} dateUploaded={"06 June 2020"} parentFolder={"Folder B"}/>
+                {this.handleItems(this.state.items)}
                 </tbody>
             </table>
         );
