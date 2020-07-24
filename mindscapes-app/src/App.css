@@ -333,3 +333,26 @@ h2.folder {
 .btn:disabled:hover {
   background-color: var(--accent-color);
 }
+
+.notification p {
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+
+.form-control-plaintext {
+  cursor: unset;
+  color: var(--main-text-color);
+  background-color: var(--bg-color);
+  border-radius: 0;
+  padding: .375rem .5rem;
+}
+
+.form-control-plaintext:focus {
+  outline: none;
+}
+
+form.survey {
+  width: 100%;
+}

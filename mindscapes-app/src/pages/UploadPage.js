@@ -1,11 +1,13 @@
 import React from 'react';
 import UploadButton from "../components/UploadButton";
 import {postSession} from "../api/api-sessions";
+import {Redirect} from "react-router-dom";
 
 class UploadPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            success: false,
             buttonDisabled: true,
             form: {
                 sessionName: "",
@@ -26,8 +28,10 @@ class UploadPage extends React.Component {
         event.preventDefault();
         try {
             const sessionPosted = await postSession(this.state.form);
-            console.log(sessionPosted);
-            this.props.history.push('/gallery');
+            this.setState({
+                sessionPosted: sessionPosted,
+                success: true,
+            })
         } catch (error) {
             console.log(error);
         }
@@ -55,33 +59,38 @@ class UploadPage extends React.Component {
 
 
     render() {
-        return (
-            <>
-                <div className="pt-2 pb-2 mb-3">
-                    <h2>Upload new session</h2>
-                </div>
-                <div className="content p-3">
-                    <form className="mt-5" onSubmit={this.handleSubmit}>
-                        <div className="form-group mt-5">
-                            <label htmlFor="sessionName">Session name*</label>
-                            <input type="text" className="form-control" id="sessionName"
-                                   value={this.state.form.sessionName} onChange={this.handleChange}/>
-                        </div>
-                        <UploadButton labelName={"EEG file (csv/json)*"} buttonText={"Upload file"} id={"eegUpload"}
-                                      fileTypes={".csv,.json"} multiple={false} handleUpload={this.updateState}/>
-                        <UploadButton labelName={"Survey Data*"} buttonText={"Upload survey"} id={"surveyUpload"}
-                                      fileTypes={".csv,.json"} multiple={false} handleUpload={this.updateState}/>
-                        {/*<UploadButton labelName={"Images"} buttonText={"Upload images"} id={"imgUpload"} fileTypes={".png, .jpeg"} multiple={true} />*/}
+        if (this.state.success) {
+            return (<Redirect to={{pathname: '/gallery', state: {notification: "success", session: this.state.sessionPosted}}}/>)
+        } else {
+            return (
+                <>
+                    <div className="pt-2 pb-2 mb-3">
+                        <h2>Upload new session</h2>
+                    </div>
+                    <div className="content p-3">
+                        <form className="mt-5" onSubmit={this.handleSubmit}>
+                            <div className="form-group mt-5">
+                                <label htmlFor="sessionName">Session name*</label>
+                                <input type="text" className="form-control" id="sessionName"
+                                       value={this.state.form.sessionName} onChange={this.handleChange}/>
+                            </div>
+                            <UploadButton labelName={"EEG file (csv/json)*"} buttonText={"Upload file"} id={"eegUpload"}
+                                          fileTypes={".csv,.json"} multiple={false} handleUpload={this.updateState}/>
+                            <UploadButton labelName={"Survey Data*"} buttonText={"Upload survey"} id={"surveyUpload"}
+                                          fileTypes={".csv,.json"} multiple={false} handleUpload={this.updateState}/>
+                            {/*<UploadButton labelName={"Images"} buttonText={"Upload images"} id={"imgUpload"} fileTypes={".png, .jpeg"} multiple={true} />*/}
 
-                        {/*<div className="row justify-content-center mt-6">*/}
-                        <button type="submit" className="btn btn-main mt-5"
-                                disabled={this.state.buttonDisabled}>Submit
-                        </button>
-                        {/*</div>*/}
-                    </form>
-                </div>
-            </>
-        );
+                            {/*<div className="row justify-content-center mt-6">*/}
+                            <button type="submit" className="btn btn-main mt-5"
+                                    disabled={this.state.buttonDisabled}>Submit
+                            </button>
+                            {/*</div>*/}
+                        </form>
+                    </div>
+                </>
+            );
+        }
+
     }
 }
 

@@ -3,6 +3,23 @@ import Folder from "../components/Folder";
 import SessionsTable from "../components/SessionsTable";
 
 class GalleryPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.displayNotifications = this.displayNotifications.bind(this);
+    }
+
+    displayNotifications() {
+        if (this.props.location.state) {
+            console.log(this.props.location.state.session);
+            return (
+                <div className="notification">
+                    <p>Session uploaded successfully!</p>
+                </div>
+
+            )
+        }
+    }
+
     render() {
         return (
             <>
@@ -10,6 +27,7 @@ class GalleryPage extends React.Component {
                     <h2>Uploaded sessions</h2>
                 </div>
                 <div className="content p-3">
+                    {this.displayNotifications()}
                     {/*<h3 className="mt-3">Folders</h3>*/}
                     {/*<div className="folders d-flex mt-4">*/}
                     {/*    <Folder folderName={"Folder A"} info={"234 files"} />*/}
