@@ -5,20 +5,41 @@ import SessionsTable from "../components/SessionsTable";
 class GalleryPage extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            notification: "",
+            refreshTable: false
+        }
+        this.handleDelete = this.handleDelete.bind(this);
         this.displayNotifications = this.displayNotifications.bind(this);
+    }
+
+
+    handleDelete(session) {
+        this.setState({
+            notification: "delete",
+            updatedSessionName: session.name,
+        })
     }
 
     displayNotifications() {
         if (this.props.location.state) {
-            console.log(this.props.location.state.session);
             return (
                 <div className="notification">
-                    <p>Session uploaded successfully!</p>
+                    <p>Session "{this.props.location.state.session.name}" uploaded successfully!</p>
+                </div>
+            )
+        } else if (this.state.notification === "delete") {
+            return (
+                <div className="notification">
+                    <p>Session "{this.state.updatedSessionName}" deleted successfully!</p>
                 </div>
 
             )
         }
     }
+
+
 
     render() {
         return (
@@ -38,7 +59,7 @@ class GalleryPage extends React.Component {
                     {/*</div>*/}
 
                     <h3 className="mt-6">Sessions</h3>
-                    <SessionsTable />
+                    <SessionsTable handleSessionDelete={this.handleDelete} />
                 </div>
             </>
         );

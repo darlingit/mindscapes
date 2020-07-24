@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectID } from 'mongodb';
 
 const app = express();
 
@@ -35,10 +35,19 @@ app.get('/api/sessions/:name', async (req, res) => {
     }, res);
 })
 
+app.delete('/api/sessions/delete', async (req, res) => {
+    const {sessionId} = req.body;
+
+    await withDB(async (db) => {
+        db.collection('sessions').deleteOne({_id: ObjectID(sessionId)})
+        res.status(200).json("deleted");
+    }, res);
+})
+
 
 async function csvToJson(csvString) {
     const csv = require('csvtojson');
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         csv().fromString(csvString)
             .then((jsonObj) => {
                 resolve(jsonObj);

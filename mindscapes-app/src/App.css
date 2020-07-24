@@ -175,7 +175,8 @@ h6 {
 /*}*/
 
 .option-button {
-  padding-left: 1.7rem!important;
+  /*padding-left: 1.7rem!important;*/
+  padding: 0!important;
   width: 60px;
   color: var(--card-bg-color);
   background-color: var(--accent-color);
@@ -285,6 +286,7 @@ h2.folder {
 }
 
 .folder .option-button {
+  padding-left: 1.7rem!important;
   color: var(--main-text-color);
   background-color: transparent;
 }
@@ -355,4 +357,33 @@ h2.folder {
 
 form.survey {
   width: 100%;
+}
+
+.option-button .btn {
+  background-color: transparent;
+  border: none;
+  padding: 1rem;
+  width: 100%;
+}
+
+.option-button .btn:hover {
+  background-color: var(--hover-color);
+}
+
+.option-button .btn::after {
+  display: none;
+}
+
+.btn-primary:focus, .show>.btn-primary.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  background-color: var(--hover-color);
+  border:none;
+}
+
+.dropdown-menu {
+  border: 1px solid var(--hover-color);
+  border-radius: 0;
 }

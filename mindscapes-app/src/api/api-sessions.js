@@ -20,6 +20,16 @@ const getAllSessions = async() => {
     return await response.json();
 }
 
+const deleteSession = async(sessionId) => {
+    const response = await fetch(`/api/sessions/delete`, {
+        method: 'delete',
+        body: JSON.stringify({ sessionId }),
+        headers: {
+        'Content-Type': 'application/json',
+        }});
+    return await response.json();
+}
+
 const postSession = async(form) => {
     const { sessionName, eegUpload, surveyUpload } = form;
 
@@ -46,4 +56,4 @@ const postSession = async(form) => {
     return await response.json();
 }
 
-export {getAllSessions, postSession};
+export {getAllSessions, postSession, deleteSession};

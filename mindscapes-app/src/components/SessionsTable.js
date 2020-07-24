@@ -12,10 +12,15 @@ class SessionsTable extends React.Component {
         }
 
         this.getData = this.getData.bind(this);
+        this.updateTable = this.updateTable.bind(this);
     }
 
     async componentDidMount() {
         await this.getData();
+    }
+
+    updateTable(session) {
+        this.getData().then(() => this.props.handleSessionDelete(session));
     }
 
     async getData() {
@@ -35,11 +40,12 @@ class SessionsTable extends React.Component {
     handleItems(items) {
         let components = [];
         if (!this.state.isLoading) {
-            items.map((element, index) =>
+            items.map((element) =>
                 components.push(
                     <SessionItem
-                        key={index}
+                        key={element._id}
                         session={element}
+                        handleSessionDelete={this.updateTable}
                     />
                 )
             );
