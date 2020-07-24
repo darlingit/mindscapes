@@ -1,6 +1,6 @@
 import React from "react";
 import SessionItem from "./SessionItem";
-import {getAllSessions} from "../api/sessions";
+import {getAllSessions} from "../api/api-sessions";
 
 class SessionsTable extends React.Component {
     constructor(props) {
