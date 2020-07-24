@@ -25,18 +25,18 @@ class SessionPage extends React.Component {
 
                         </div>
                         <div className="mt-5 w-95">
-                            <Card className="p-3">
+                            <Card>
                                 <Card.Title className="d-flex">
-                                    <div className="mr-auto my-auto p-3">EEG Data</div>
+                                    <div className="mr-auto my-auto p-3 pl-4">EEG Data</div>
                                     <div className="btn-edit">
                                         <i className="far fa-edit fa-md"/>
                                     </div>
                                 </Card.Title>
                                 <Card.Body>[eeg visualisation]</Card.Body>
                             </Card>
-                            <Card className="p-3">
+                            <Card>
                                 <Card.Title className="d-flex">
-                                    <div className="mr-auto my-auto p-3">Survey Data</div>
+                                    <div className="mr-auto my-auto p-3 pl-4">Survey Data</div>
                                     {/*<div className="btn-edit">*/}
                                     {/*    <i className="far fa-edit fa-md"/>*/}
                                     {/*</div>*/}

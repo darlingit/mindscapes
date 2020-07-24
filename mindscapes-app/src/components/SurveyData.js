@@ -26,7 +26,7 @@ class SurveyData extends React.Component {
     render() {
         const survey = this.props.survey;
         return (
-            <Form className="px-5 survey">
+            <Form className="px-4 survey">
                 {this.renderFields(survey)}
             </Form>
 
