@@ -178,8 +178,12 @@ h6 {
   /*padding-left: 1.7rem!important;*/
   padding: 0!important;
   width: 60px;
-  color: var(--card-bg-color);
-  background-color: var(--accent-color);
+  /*color: var(--card-bg-color);*/
+  /*background-color: var(--accent-color);*/
+}
+
+.option-button i {
+  color: var(--accent-color);
 }
 
 .table td {
@@ -291,6 +295,10 @@ h2.folder {
   background-color: transparent;
 }
 
+.folder .option-button i {
+  color: var(--main-text-color);
+}
+
 .card {
   margin-bottom: 3rem;
   border-radius: 0;
@@ -364,10 +372,16 @@ form.survey {
   border: none;
   padding: 1rem;
   width: 100%;
+  transition: 0.5s;
 }
 
 .option-button .btn:hover {
-  background-color: var(--hover-color);
+  color: var(--card-bg-color);
+  background-color: var(--accent-color);
+}
+
+.option-button .btn:hover i {
+  color: var(--card-bg-color);
 }
 
 .option-button .btn::after {
@@ -379,11 +393,15 @@ form.survey {
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
-  background-color: var(--hover-color);
+  background-color: var(--accent-color);
   border:none;
 }
 
+.btn-primary:not(:disabled):not(.disabled):active i, .show>.btn-primary.dropdown-toggle  i {
+  color: var(--card-bg-color);
+}
+
 .dropdown-menu {
-  border: 1px solid var(--hover-color);
+  border: 1px solid var(--accent-color);
   border-radius: 0;
 }
