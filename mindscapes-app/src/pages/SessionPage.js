@@ -2,6 +2,7 @@ import React from "react";
 import {Card} from "react-bootstrap";
 import {Redirect} from "react-router-dom";
 import SurveyData from "../components/SurveyData";
+import Visualization from "../components/Visualization";
 
 class SessionPage extends React.Component {
     renderRedirect = () => {
@@ -32,7 +33,9 @@ class SessionPage extends React.Component {
                                         <i className="far fa-edit fa-md"/>
                                     </div>
                                 </Card.Title>
-                                <Card.Body>[eeg visualisation]</Card.Body>
+                                <Card.Body>
+                                    <Visualization data={item.eeg}/>
+                                </Card.Body>
                             </Card>
                             <Card>
                                 <Card.Title className="d-flex">
