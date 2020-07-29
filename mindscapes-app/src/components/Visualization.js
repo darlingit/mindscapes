@@ -1,13 +1,13 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import {Form} from "react-bootstrap";
 import * as d3 from 'd3';
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
 const colors = {
-    eeg_1: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#ff7a59"]),
-    eeg_2: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#00AA8D"]),
-    eeg_3: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#00bfff"]),
-    eeg_4: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#FFB100"]),
+    eeg_1: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#ff7a59"]),
+    eeg_2: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#00AA8D"]),
+    eeg_3: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#00bfff"]),
+    eeg_4: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#FFB100"]),
 }
 
 function epochToTime(epochString) {
@@ -51,7 +51,7 @@ function processData(data) {
         } else {
             lastFull = {orgIndex: dIndex};
             sensors.forEach(s => {
-                lastFull ={
+                lastFull = {
                     ...lastFull,
                     [s]: parseFloat(d[s]),
                 }
@@ -100,16 +100,30 @@ class Visualization extends React.Component {
             height = svgHeight - margin.top - margin.bottom;
 
         const eegSvg = this.eeg;
+
+
+        let zoom = d3.zoom()
+            .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+            .extent([[0, 0], [width, height]])
+            .on("zoom", updateChart);
+
         let svg = d3.select(eegSvg)
             .append("g")
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
+        svg.append("rect").attr("width", width)
+            .attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(zoom);
+
         // X axis
         let x = d3.scaleTime()
             .domain(d3.extent(data, d => d["isoDateTime"]))
             .range([0, width]);
-        svg.append("g")
+        let xAxis = svg.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
 
@@ -117,41 +131,31 @@ class Visualization extends React.Component {
         let y = d3.scaleLinear()
             .domain([0, d3.max(sensorValues)])
             .range([height, 0]);
-        svg.append("g")
+        let yAxis = svg.append("g")
             .call(d3.axisLeft(y));
 
-        // Grid
-        // let grid = g => g
-        //     .attr("stroke", "grey")
-        //     .attr("stroke-opacity", 0.1)
-        //     .call(g => g.append("g")
-        //         .selectAll("line")
-        //         .data(x.ticks())
-        //         .join("line")
-        //         .attr("x1", d => x(d))
-        //         .attr("x2", d => x(d))
-        //         .attr("y1", 0)
-        //         .attr("y2", height))
-        //     .call(g => g.append("g")
-        //         .selectAll("line")
-        //         .data(y.ticks())
-        //         .join("line")
-        //         .attr("y1", d => y(d))
-        //         .attr("y2", d => y(d))
-        //         .attr("x1", 0)
-        //         .attr("x2", width));
-        // svg.append("g")
-        //     .call(grid);
+
+        let clip = svg.append("defs").append("SVG:clipPath")
+            .attr("id", "clip")
+            .append("SVG:rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("x", 0)
+            .attr("y", 0);
+
+        // Create the scatter variable: where both the circles and the brush take place
+        let paths = svg.append('g')
+            .attr("clip-path", "url(#clip)")
 
         // Path
         sensors.forEach(s => {
             let line = d3.line()
-                    .curve(d3.curveStep)
-                    .x(d => x(d["isoDateTime"]))
-                    .y(d => y(d[s]));
+                .curve(d3.curveStep)
+                .x(d => x(d["isoDateTime"]))
+                .y(d => y(d[s]));
 
-            svg.append("linearGradient")
-                .attr("id", "linear-gradient-" + s)
+            paths.append("linearGradient")
+                .attr("id", `linear-gradient-${s}`)
                 .attr("gradientUnits", "userSpaceOnUse")
                 .attr("x1", 0)
                 .attr("x2", width)
@@ -161,7 +165,7 @@ class Visualization extends React.Component {
                 .attr("offset", d => x(d["isoDateTime"]) / width)
                 .attr("stop-color", d => colors[s](d.condition));
 
-            svg.append("path")
+            paths.append("path")
                 .datum(data)
                 .attr("id", "path-" + s)
                 .attr("fill", "none")
@@ -174,6 +178,25 @@ class Visualization extends React.Component {
         });
 
 
+        function updateChart() {
+            let newX = d3.event.transform.rescaleX(x);
+            xAxis.call(d3.axisBottom(newX))
+
+            sensors.forEach(s => {
+                let line = d3.line()
+                    .curve(d3.curveStep)
+                    .x(d => newX(d["isoDateTime"]))
+                    .y(d => y(d[s]));
+
+                paths.select(`#linear-gradient-${s}`)
+                    .selectAll("stop")
+                    .attr("offset", d => newX(d["isoDateTime"]) / width)
+                    .attr("stop-color", d => colors[s](d.condition));
+
+                paths.select(`#path-${s}`)
+                    .attr("d", line);
+            })
+        }
     }
 
     displayOptions(checkBoxes) {
@@ -194,7 +217,7 @@ class Visualization extends React.Component {
 
     render() {
         let checkBoxes = [];
-        sensors.forEach((s,i) => {
+        sensors.forEach((s, i) => {
             checkBoxes.push(
                 <Form.Check
                     inline
@@ -204,7 +227,7 @@ class Visualization extends React.Component {
                     key={`${s}`}
                     type={"checkbox"}
                     id={`${s}`}
-                    label={`Sensor ${i+1}`}
+                    label={`Sensor ${i + 1}`}
                 />
             )
         });
@@ -212,6 +235,7 @@ class Visualization extends React.Component {
             <React.Fragment>
                 {this.displayOptions(checkBoxes)}
                 <svg ref={eeg => this.eeg = eeg} width="100%" height={300}/>
+                <div id="dataviz_axisZoom"></div>
             </React.Fragment>
         )
     }
