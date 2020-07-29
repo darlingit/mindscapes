@@ -5,6 +5,21 @@ import SurveyData from "../components/SurveyData";
 import Visualization from "../components/Visualization";
 
 class SessionPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayOn: false,
+        }
+
+        this.toggleOptions = this.toggleOptions.bind(this);
+    }
+
+    toggleOptions() {
+        this.setState(prevState => ({
+            displayOn: !prevState.displayOn,
+        }))
+    }
+
     renderRedirect = () => {
         if (!this.props.location.customProps) {
             return <Redirect to='/gallery'/>
@@ -29,12 +44,12 @@ class SessionPage extends React.Component {
                             <Card>
                                 <Card.Title className="d-flex">
                                     <div className="mr-auto my-auto p-3 pl-4">EEG Data</div>
-                                    <div className="btn-edit">
+                                    <div className="btn-edit" onClick={this.toggleOptions}>
                                         <i className="far fa-edit fa-md"/>
                                     </div>
                                 </Card.Title>
                                 <Card.Body>
-                                    <Visualization data={item.eeg}/>
+                                    <Visualization data={item.eeg} displayOptions={this.state.displayOn}/>
                                 </Card.Body>
                             </Card>
                             <Card>

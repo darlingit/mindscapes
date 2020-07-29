@@ -1,4 +1,5 @@
 import React from "react";
+import { Form } from "react-bootstrap";
 import * as d3 from 'd3';
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
@@ -8,7 +9,6 @@ const colors = {
     eeg_3: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#00bfff"]),
     eeg_4: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#FFB100"]),
 }
-
 
 function epochToTime(epochString) {
     const s = epochString.split(".")[0];
@@ -70,17 +70,17 @@ class Visualization extends React.Component {
         super(props);
 
         this.createLineChart = this.createLineChart.bind(this);
+        this.displayOptions = this.displayOptions.bind(this);
+
     }
 
     componentDidMount() {
         this.createLineChart();
     }
 
-    componentDidUpdate() {
-        this.createLineChart();
-    }
-
-
+    // componentDidUpdate() {
+    //     this.createLineChart();
+    // }
 
     createLineChart() {
         const data = processData(this.props.data);
@@ -95,7 +95,7 @@ class Visualization extends React.Component {
 
         const svgWidth = this.eeg.clientWidth;
         const svgHeight = this.eeg.clientHeight;
-        const margin = {top: 10, right: 30, bottom: 30, left: 60},
+        const margin = {top: 10, right: 30, bottom: 30, left: 50},
             width = svgWidth - margin.left - margin.right,
             height = svgHeight - margin.top - margin.bottom;
 
@@ -176,10 +176,43 @@ class Visualization extends React.Component {
 
     }
 
+    displayOptions(checkBoxes) {
+        if (this.props.displayOptions) {
+            return (
+                <div className="options ml-5 mb-4">
+                    {checkBoxes}
+                </div>
+            )
+        }
+    }
+
+    showSensor(checkbox) {
+        let opacity = checkbox.checked ? 1 : 0;
+        d3.select(`#path-${checkbox.id}`).style("opacity", opacity);
+    }
+
 
     render() {
+        let checkBoxes = [];
+        sensors.forEach((s,i) => {
+            checkBoxes.push(
+                <Form.Check
+                    inline
+                    defaultChecked
+                    custom
+                    onClick={e => this.showSensor(e.target)}
+                    key={`${s}`}
+                    type={"checkbox"}
+                    id={`${s}`}
+                    label={`Sensor ${i+1}`}
+                />
+            )
+        });
         return (
-            <svg ref={eeg => this.eeg = eeg} width="100%" height={300}/>
+            <React.Fragment>
+                {this.displayOptions(checkBoxes)}
+                <svg ref={eeg => this.eeg = eeg} width="100%" height={300}/>
+            </React.Fragment>
         )
     }
 }

@@ -315,6 +315,12 @@ h2.folder {
   text-align: center;
   color: var(--card-bg-color);
   background-color: var(--accent-color);
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  color: var(--card-bg-color);
+  background-color: var(--hover-color);
 }
 
 .form-control {
@@ -404,4 +410,33 @@ form.survey {
 .dropdown-menu {
   border: 1px solid var(--accent-color);
   border-radius: 0;
+}
+
+input[type=checkbox] {
+  display: none;
+}
+
+.custom-control-label::before {
+  top: 2px;
+  /*width: 1.2em;*/
+  /*height: 1.2em;*/
+}
+
+.custom-control-label::after {
+  top: 2px;
+  /*width: 1.2em;*/
+  /*height: 1.2em;*/
+}
+
+.custom-control-label {
+  color: var(--main-text-color);
+}
+
+.custom-checkbox .custom-control-label::before {
+  border-radius: 0;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
 }
