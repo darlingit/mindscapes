@@ -2,6 +2,13 @@ import React from "react";
 import * as d3 from 'd3';
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
+const colors = {
+    eeg_1: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#ff7a59"]),
+    eeg_2: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#00AA8D"]),
+    eeg_3: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#00bfff"]),
+    eeg_4: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#FFB100"]),
+}
+
 
 function epochToTime(epochString) {
     const s = epochString.split(".")[0];
@@ -79,6 +86,13 @@ class Visualization extends React.Component {
         const data = processData(this.props.data);
         console.log(data);
 
+        let sensorValues = [];
+        sensors.forEach(s => {
+            sensorValues.push(data.map(d => d[s]));
+        })
+        sensorValues = sensorValues.flat(1);
+
+
         const svgWidth = this.eeg.clientWidth;
         const svgHeight = this.eeg.clientHeight;
         const margin = {top: 10, right: 30, bottom: 30, left: 60},
@@ -101,9 +115,7 @@ class Visualization extends React.Component {
 
         // Y axis
         let y = d3.scaleLinear()
-            .domain([0, d3.max(data, function (d) {
-                return + d["eeg_1"];
-            })])
+            .domain([0, d3.max(sensorValues)])
             .range([height, 0]);
         svg.append("g")
             .call(d3.axisLeft(y));
@@ -132,32 +144,34 @@ class Visualization extends React.Component {
         //     .call(grid);
 
         // Path
-        let color = d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666","#ff7a59"]);
+        sensors.forEach(s => {
+            let line = d3.line()
+                    .curve(d3.curveStep)
+                    .x(d => x(d["isoDateTime"]))
+                    .y(d => y(d[s]));
 
-        let line = d3.line()
-            .curve(d3.curveStep)
-            .x(d => x(d["isoDateTime"]))
-            .y(d => y(d["eeg_1"]));
+            svg.append("linearGradient")
+                .attr("id", "linear-gradient-" + s)
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0)
+                .attr("x2", width)
+                .selectAll("stop")
+                .data(data)
+                .join("stop")
+                .attr("offset", d => x(d["isoDateTime"]) / width)
+                .attr("stop-color", d => colors[s](d.condition));
 
-        svg.append("linearGradient")
-            .attr("id", "linear-gradient")
-            .attr("gradientUnits", "userSpaceOnUse")
-            .attr("x1", 0)
-            .attr("x2", width)
-            .selectAll("stop")
-            .data(data)
-            .join("stop")
-            .attr("offset", d => x(d["isoDateTime"]) / width)
-            .attr("stop-color", d => color(d.condition));
+            svg.append("path")
+                .datum(data)
+                .attr("id", "path-" + s)
+                .attr("fill", "none")
+                .attr("stroke", "url(#linear-gradient-" + s + ")")
+                .attr("stroke-width", 2)
+                .attr("stroke-linejoin", "round")
+                .attr("stroke-linecap", "round")
+                .attr("d", line);
 
-        svg.append("path")
-            .datum(data)
-            .attr("fill", "none")
-            .attr("stroke", "url(#linear-gradient)")
-            .attr("stroke-width", 2)
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round")
-            .attr("d", line);
+        });
 
 
     }
