@@ -3,17 +3,15 @@ import * as d3 from 'd3';
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
 
-function msToTime(duration) {
-    let milliseconds = parseInt((duration % 1000) / 100),
-        seconds = Math.floor((duration / 1000) % 60),
-        minutes = Math.floor((duration / (1000 * 60)) % 60),
-        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+function epochToTime(epochString) {
+    const s = epochString.split(".")[0];
+    const ms = epochString.split(".")[1];
+    let date = new Date(0);
 
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    date.setUTCSeconds(s);
+    date.setUTCMilliseconds(ms);
 
-    return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    return date.toISOString();
 }
 
 function processData(data) {
@@ -55,7 +53,7 @@ function processData(data) {
             delta = 0;
             d["condition"] = "ORG";
         }
-        d["timestamp"] = msToTime(d["timestamps"]);
+        d["isoDateTime"] = d3.isoParse(epochToTime(d["timestamps"]));
     })
     return data;
 }
@@ -77,7 +75,7 @@ class Visualization extends React.Component {
 
 
 
-    async createLineChart() {
+    createLineChart() {
         const data = processData(this.props.data);
         console.log(data);
 
@@ -94,14 +92,12 @@ class Visualization extends React.Component {
                 "translate(" + margin.left + "," + margin.top + ")");
 
         // X axis
-        let x = d3.scaleLinear()
-            .domain(d3.extent(data, function (d) {
-                return d["timestamps"];
-            }))
+        let x = d3.scaleTime()
+            .domain(d3.extent(data, d => d["isoDateTime"]))
             .range([0, width]);
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
 
         // Y axis
         let y = d3.scaleLinear()
@@ -140,7 +136,7 @@ class Visualization extends React.Component {
 
         let line = d3.line()
             .curve(d3.curveStep)
-            .x(d => x(d["timestamps"]))
+            .x(d => x(d["isoDateTime"]))
             .y(d => y(d["eeg_1"]));
 
         svg.append("linearGradient")
@@ -151,7 +147,7 @@ class Visualization extends React.Component {
             .selectAll("stop")
             .data(data)
             .join("stop")
-            .attr("offset", d => x(d.timestamps) / width)
+            .attr("offset", d => x(d["isoDateTime"]) / width)
             .attr("stop-color", d => color(d.condition));
 
         svg.append("path")
