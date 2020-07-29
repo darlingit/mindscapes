@@ -118,6 +118,7 @@ class Visualization extends React.Component {
             .style("pointer-events", "all")
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
             .call(zoom);
+        // svg.call(d3.brush().extent([[0, 0], [width, height]]));
 
         // X axis
         let x = d3.scaleTime()
@@ -135,7 +136,7 @@ class Visualization extends React.Component {
             .call(d3.axisLeft(y));
 
 
-        let clip = svg.append("defs").append("SVG:clipPath")
+        svg.append("defs").append("SVG:clipPath")
             .attr("id", "clip")
             .append("SVG:rect")
             .attr("width", width)
@@ -145,7 +146,7 @@ class Visualization extends React.Component {
 
         // Create the scatter variable: where both the circles and the brush take place
         let paths = svg.append('g')
-            .attr("clip-path", "url(#clip)")
+            .attr("clip-path", "url(#clip)");
 
         // Path
         sensors.forEach(s => {
