@@ -1,7 +1,7 @@
 import React from "react";
 import {Form, Row} from "react-bootstrap";
 import reactCSS from 'reactcss';
-import { ChromePicker } from 'react-color'
+import {ChromePicker} from 'react-color'
 
 class SensorOptions extends React.Component {
     constructor(props) {
@@ -25,15 +25,15 @@ class SensorOptions extends React.Component {
     }
 
     handleClick() {
-        this.setState({ displayColorPicker: !this.state.displayColorPicker })
+        this.setState({displayColorPicker: !this.state.displayColorPicker})
     };
 
     handleClose() {
-        this.setState({ displayColorPicker: false })
+        this.setState({displayColorPicker: false})
     };
 
     handleColorChange(color) {
-        this.setState({ color: color.rgb });
+        this.setState({color: color.rgb});
         this.props.changeColor(this.state.sensor, color.rgb);
     }
 
@@ -43,7 +43,7 @@ class SensorOptions extends React.Component {
                 colorPicker: {
                     width: '30px',
                     height: '14px',
-                    background: `rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b }, ${ this.state.color.a })`,
+                    background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,
                 },
                 popover: {
                     position: 'absolute',
@@ -52,29 +52,27 @@ class SensorOptions extends React.Component {
             },
         });
         return (
-            <Form className="form-color">
-                <Form.Group as={Row} controlId={this.state.sensor}>
-                    <Form.Check
-                        inline
-                        defaultChecked
-                        custom
-                        onClick={e => this.props.showSensor(e.target)}
-                        type={"checkbox"}
-                        id={`${this.state.sensor}`}
-                        label={`Sensor ${this.state.sensor.slice(-1)}`}
-                    />
-                    <div>
-                        <div className="swatch" onClick={this.handleClick}>
-                            <div style={ styles.colorPicker } />
-                        </div>
-                        { this.state.displayColorPicker ? <div style={ styles.popover }>
-                            <div className="cover" onClick={ this.handleClose }/>
-                            <ChromePicker color={ this.state.color } onChange={ this.handleColorChange } />
-                        </div> : null }
-
+            <Form.Group as={Row} controlId={this.state.sensor} className="ml-2">
+                <Form.Check
+                    inline
+                    defaultChecked
+                    custom
+                    onClick={e => this.props.showSensor(e.target)}
+                    type={"checkbox"}
+                    id={`${this.state.sensor}`}
+                    label={`Sensor ${this.state.sensor.slice(-1)}`}
+                />
+                <div>
+                    <div className="swatch" onClick={this.handleClick}>
+                        <div style={styles.colorPicker}/>
                     </div>
-                </Form.Group>
-            </Form>
+                    {this.state.displayColorPicker ? <div style={styles.popover}>
+                        <div className="cover" onClick={this.handleClose}/>
+                        <ChromePicker color={this.state.color} onChange={this.handleColorChange}/>
+                    </div> : null}
+
+                </div>
+            </Form.Group>
         );
     }
 }

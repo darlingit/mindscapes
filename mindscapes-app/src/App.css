@@ -462,3 +462,18 @@ input[type=checkbox] {
   left: 0;
 }
 
+.options .form-label {
+  margin-top: -7px;
+  color: var(--main-text-color);
+  font-size: 0.8rem;
+}
+
+.options input[type=number] {
+  margin-right: 0.3rem;
+  width: 35%;
+  display: inline;
+  font-size: 0.8rem;
+  height: 85%;
+  padding: 0 0.2rem;
+}
+

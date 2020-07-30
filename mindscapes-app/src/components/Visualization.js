@@ -1,6 +1,7 @@
 import React from "react";
 import * as d3 from 'd3';
 import SensorOptions from "./SensorOptions";
+import {Form, Row, Col} from "react-bootstrap";
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
 const colors = {
@@ -176,6 +177,7 @@ class Visualization extends React.Component {
             paths.append("path")
                 .datum(data)
                 .attr("id", "path-" + s)
+                .attr("class", "sensor-path")
                 .attr("fill", "none")
                 .attr("stroke", "url(#linear-gradient-" + s + ")")
                 .attr("stroke-width", 2)
@@ -207,6 +209,14 @@ class Visualization extends React.Component {
         }
     }
 
+    changeStrokeWidth(e) {
+        const strokeWidth = parseInt(e.target.value);
+        if (strokeWidth > 0) {
+            d3.selectAll(".sensor-path")
+                .attr("stroke-width", strokeWidth);
+        }
+    }
+
     changeColors(sensor, color) {
         const rgbaColor = "rgba(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
         console.log(rgbaColor);
@@ -219,9 +229,25 @@ class Visualization extends React.Component {
     displayOptions(checkBoxes) {
         if (this.props.displayOptions) {
             return (
-                <div className="options ml-5 mt-5">
-                    {checkBoxes}
-                </div>
+                <Form className="options ml-5 mt-5">
+                    <Row>
+                        <Col sm={4}>
+                            {checkBoxes}
+                        </Col>
+                        <Col sm={6}>
+                            <Form.Group as={Row} controlId="stroke-width">
+                                <Form.Label column sm={3} className="pr-0">
+                                    Stroke width
+                                </Form.Label>
+                                <Col sm={6}>
+                                    <Form.Control type="number" defaultValue={2} min="1" onChange={this.changeStrokeWidth}/>
+                                    <span style={{fontSize: "0.8rem", display: "inline-block"}}>px</span>
+                                </Col>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                </Form>
             )
         }
     }
