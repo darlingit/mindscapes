@@ -56,4 +56,15 @@ const postSession = async(form) => {
     return await response.json();
 }
 
-export {getAllSessions, postSession, deleteSession};
+const updateDesign = async(sessionName, design) => {
+    const response = await fetch(`/api/sessions/update`, {
+        method: 'post',
+        body: JSON.stringify({ sessionName, design }),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    return await response.json();
+}
+
+export {getAllSessions, postSession, deleteSession, updateDesign};

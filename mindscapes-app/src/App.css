@@ -219,12 +219,30 @@ td a:hover {
   /*font-weight: 700;*/
 }
 
+.btn:focus {
+  box-shadow: none;
+}
+
 .btn-main {
-  color: var(--card-bg-color);
   background-color: var(--accent-color);
+  font-weight: 700;
+  color: var(--card-bg-color);
+  text-transform: uppercase;
+  /*border: 1px solid var(--main-text-color);*/
 }
 
 .btn-main:hover {
+  color: var(--card-bg-color);
+  background-color: var(--hover-color);
+}
+
+.btn-main:focus {
+  color: var(--card-bg-color);
+  background-color: var(--hover-color);
+}
+
+.btn-main:not(:disabled):not(.disabled):active {
+  color: var(--card-bg-color);
   background-color: var(--hover-color);
 }
 
@@ -263,13 +281,6 @@ label.btn-upload {
 
 .form-group {
   margin-bottom: 3rem;
-}
-
-[type=submit] {
-  font-weight: 700;
-  color: var(--main-text-color);
-  text-transform: uppercase;
-  border: 1px solid var(--main-text-color);
 }
 
 a.folder-item {
@@ -475,5 +486,9 @@ input[type=checkbox] {
   font-size: 0.8rem;
   height: 85%;
   padding: 0 0.2rem;
+}
+
+form.options {
+  width: 90%;
 }
 

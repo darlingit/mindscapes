@@ -55,6 +55,17 @@ async function csvToJson(csvString) {
     });
 }
 
+app.post('/api/sessions/update', async (req, res) => {
+    const { sessionName, design } = req.body;
+
+    await withDB(async (db) => {
+        await db.collection("sessions").updateOne({ name: sessionName }, {
+            $set: {design: design}
+        })
+        res.status(200).json("sucess");
+    }, res);
+});
+
 app.post('/api/sessions/post', async (req, res) => {
     const { sessionName, filesWithContent } = req.body;
 

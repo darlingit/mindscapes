@@ -12,12 +12,30 @@ class SessionPage extends React.Component {
         }
 
         this.toggleOptions = this.toggleOptions.bind(this);
+        this.displayNotifications = this.displayNotifications.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     toggleOptions() {
         this.setState(prevState => ({
             displayOn: !prevState.displayOn,
         }))
+    }
+
+    handleUpdate(notification) {
+        this.setState({
+            notification,
+        });
+    }
+
+    displayNotifications() {
+        if (this.state.notification === "success") {
+            return (
+                <div className="notification">
+                    <p>Changes saved!</p>
+                </div>
+            )
+        }
     }
 
     renderRedirect = () => {
@@ -31,6 +49,7 @@ class SessionPage extends React.Component {
                         <h2 className="folder">Uploaded sessions {item.parent ? "> " + item.parent : ""} </h2>
                     </div>
                     <div className="content p-3">
+                        {this.displayNotifications()}
                         <div className="folder d-flex">
                             <div className="mr-auto d-flex mt-3 my-auto">
                                 <h3 className="my-auto">{item.name}</h3>
@@ -38,7 +57,6 @@ class SessionPage extends React.Component {
                             <div className="option-button my-auto">
                                 <i className="fas fa-ellipsis-v fa-md"/>
                             </div>
-
                         </div>
                         <div className="mt-5 w-95">
                             <Card>
@@ -49,7 +67,9 @@ class SessionPage extends React.Component {
                                     </div>
                                 </Card.Title>
                                 <Card.Body>
-                                    <Visualization data={item.eeg} displayOptions={this.state.displayOn}/>
+                                    <Visualization handleUpdate={this.handleUpdate} sessionName={item.name}
+                                                   data={item.eeg} design={item.design}
+                                                   displayOptions={this.state.displayOn}/>
                                 </Card.Body>
                             </Card>
                             <Card>
@@ -60,7 +80,7 @@ class SessionPage extends React.Component {
                                     {/*</div>*/}
                                 </Card.Title>
                                 <Card.Body>
-                                    <SurveyData survey={item.survey} />
+                                    <SurveyData survey={item.survey}/>
                                 </Card.Body>
                             </Card>
                         </div>

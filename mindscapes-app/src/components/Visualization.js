@@ -1,16 +1,11 @@
 import React from "react";
 import * as d3 from 'd3';
 import SensorOptions from "./SensorOptions";
-import {Form, Row, Col} from "react-bootstrap";
+import {Col, Form, Row, Button} from "react-bootstrap";
+import {updateDesign} from "../api/api-sessions";
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
-const colors = {
-    derived: "#666666",
-    eeg_1: "rgba(255,122,89,1)",
-    eeg_2: "rgba(0,170,141,1)",
-    eeg_3: "rgba(0,191,255,1)",
-    eeg_4: "rgba(255,177,0,1)",
-}
+
 
 let colorScales = {};
 
@@ -74,16 +69,32 @@ class Visualization extends React.Component {
     constructor(props) {
         super(props);
 
+        const pathDesign = props.design ? props.design : {
+            strokeWidth: 2,
+            pathColors: {
+                derived: "#666666",
+                eeg_1: "rgba(255,122,89,1)",
+                eeg_2: "rgba(0,170,141,1)",
+                eeg_3: "rgba(0,191,255,1)",
+                eeg_4: "rgba(255,177,0,1)",
+            },
+
+        };
+        this.state = {
+            sessionName: props.sessionName,
+            pathDesign,
+        }
+
         this.createLineChart = this.createLineChart.bind(this);
         this.displayOptions = this.displayOptions.bind(this);
         this.showSensor = this.showSensor.bind(this);
+        this.changeColors = this.changeColors.bind(this);
+        this.updateDesign = this.updateDesign.bind(this);
+        this.changeStrokeWidth = this.changeStrokeWidth.bind(this);
 
     }
 
     componentDidMount() {
-        sensors.forEach(s => {
-            colorScales[s] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, colors[s]])
-        });
         this.createLineChart();
     }
 
@@ -140,7 +151,7 @@ class Visualization extends React.Component {
         let y = d3.scaleLinear()
             .domain([0, d3.max(sensorValues)])
             .range([height, 0]);
-        let yAxis = svg.append("g")
+        svg.append("g")
             .call(d3.axisLeft(y));
 
 
@@ -155,6 +166,14 @@ class Visualization extends React.Component {
 
         let paths = svg.append('g')
             .attr("clip-path", "url(#clip)");
+
+        // Path design
+        const strokeWidth = this.state.pathDesign.strokeWidth;
+        const colors = this.state.pathDesign.pathColors;
+        sensors.forEach(s => {
+            colorScales[s] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, colors[s]])
+        });
+
 
         // Path
         sensors.forEach(s => {
@@ -180,11 +199,10 @@ class Visualization extends React.Component {
                 .attr("class", "sensor-path")
                 .attr("fill", "none")
                 .attr("stroke", "url(#linear-gradient-" + s + ")")
-                .attr("stroke-width", 2)
+                .attr("stroke-width", strokeWidth)
                 .attr("stroke-linejoin", "round")
                 .attr("stroke-linecap", "round")
                 .attr("d", line);
-
         });
 
 
@@ -212,6 +230,13 @@ class Visualization extends React.Component {
     changeStrokeWidth(e) {
         const strokeWidth = parseInt(e.target.value);
         if (strokeWidth > 0) {
+            this.setState({
+                pathDesign: {
+                    ...this.state.pathDesign,
+                    strokeWidth,
+                },
+
+            });
             d3.selectAll(".sensor-path")
                 .attr("stroke-width", strokeWidth);
         }
@@ -219,17 +244,37 @@ class Visualization extends React.Component {
 
     changeColors(sensor, color) {
         const rgbaColor = "rgba(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
-        console.log(rgbaColor);
-        colorScales[sensor] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, rgbaColor]);
+        this.setState({
+            pathDesign: {
+                ...this.state.pathDesign,
+                pathColors: {
+                    ...this.state.pathDesign.pathColors,
+                    [sensor]: rgbaColor,
+                },
+            },
+
+        });
+        colorScales[sensor] = d3.scaleOrdinal(["DERIVED", "ORG"], [this.state.pathDesign.pathColors.derived, rgbaColor]);
         d3.select(`#linear-gradient-${sensor}`)
             .selectAll("stop")
             .attr("stop-color", d => colorScales[sensor](d.condition));
     }
 
+    async updateDesign(event) {
+        event.preventDefault();
+        try {
+            await updateDesign(this.state.sessionName, this.state.pathDesign);
+            window.scrollTo(0, 0);
+            this.props.handleUpdate("success");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     displayOptions(checkBoxes) {
         if (this.props.displayOptions) {
             return (
-                <Form className="options ml-5 mt-5">
+                <Form className="options ml-5 mt-5" onSubmit={this.updateDesign}>
                     <Row>
                         <Col sm={4}>
                             {checkBoxes}
@@ -240,13 +285,17 @@ class Visualization extends React.Component {
                                     Stroke width
                                 </Form.Label>
                                 <Col sm={6}>
-                                    <Form.Control type="number" defaultValue={2} min="1" onChange={this.changeStrokeWidth}/>
+                                    <Form.Control type="number" defaultValue={this.state.pathDesign.strokeWidth} min="1" onChange={this.changeStrokeWidth}/>
                                     <span style={{fontSize: "0.8rem", display: "inline-block"}}>px</span>
                                 </Col>
                             </Form.Group>
                         </Col>
                     </Row>
-
+                    <Row className="d-flex">
+                        <Button type="submit" className="btn btn-main mt-2 ml-auto" variant="main">
+                            Save changes
+                        </Button>
+                    </Row>
                 </Form>
             )
         }
@@ -261,7 +310,7 @@ class Visualization extends React.Component {
     render() {
         let checkBoxes = [];
         sensors.forEach((s, i) => {
-            checkBoxes.push(<SensorOptions sensor={s} color={colors[s]} key={i} showSensor={this.showSensor}
+            checkBoxes.push(<SensorOptions sensor={s} color={this.state.pathDesign.pathColors[s]} key={i} showSensor={this.showSensor}
                                            changeColor={this.changeColors}/>);
         });
 
