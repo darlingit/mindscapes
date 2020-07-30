@@ -5,10 +5,10 @@ import SensorOptions from "./SensorOptions";
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
 const colors = {
     derived: "#666666",
-    eeg_1: "#ff7a59",
-    eeg_2: "#00AA8D",
-    eeg_3: "#00bfff",
-    eeg_4: "#FFB100",
+    eeg_1: "rgba(255,122,89,1)",
+    eeg_2: "rgba(0,170,141,1)",
+    eeg_3: "rgba(0,191,255,1)",
+    eeg_4: "rgba(255,177,0,1)",
 }
 
 let colorScales = {};
@@ -208,7 +208,9 @@ class Visualization extends React.Component {
     }
 
     changeColors(sensor, color) {
-        colorScales[sensor] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, color]);
+        const rgbaColor = "rgba(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
+        console.log(rgbaColor);
+        colorScales[sensor] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, rgbaColor]);
         d3.select(`#linear-gradient-${sensor}`)
             .selectAll("stop")
             .attr("stop-color", d => colorScales[sensor](d.condition));
@@ -234,7 +236,7 @@ class Visualization extends React.Component {
         let checkBoxes = [];
         sensors.forEach((s, i) => {
             checkBoxes.push(<SensorOptions sensor={s} color={colors[s]} key={i} showSensor={this.showSensor}
-                                           changeColors={this.changeColors}/>);
+                                           changeColor={this.changeColors}/>);
         });
 
         return (
