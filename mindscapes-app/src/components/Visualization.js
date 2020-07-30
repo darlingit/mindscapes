@@ -1,14 +1,18 @@
 import React from "react";
-import {Form} from "react-bootstrap";
 import * as d3 from 'd3';
+import SensorOptions from "./SensorOptions";
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
 const colors = {
-    eeg_1: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#ff7a59"]),
-    eeg_2: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#00AA8D"]),
-    eeg_3: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#00bfff"]),
-    eeg_4: d3.scaleOrdinal(["DERIVED", "ORG"], ["#666666", "#FFB100"]),
+    derived: "#666666",
+    eeg_1: "#ff7a59",
+    eeg_2: "#00AA8D",
+    eeg_3: "#00bfff",
+    eeg_4: "#FFB100",
 }
+
+let colorScales = {};
+
 
 function epochToTime(epochString) {
     const s = epochString.split(".")[0];
@@ -71,10 +75,14 @@ class Visualization extends React.Component {
 
         this.createLineChart = this.createLineChart.bind(this);
         this.displayOptions = this.displayOptions.bind(this);
+        this.showSensor = this.showSensor.bind(this);
 
     }
 
     componentDidMount() {
+        sensors.forEach(s => {
+            colorScales[s] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, colors[s]])
+        });
         this.createLineChart();
     }
 
@@ -84,7 +92,6 @@ class Visualization extends React.Component {
 
     createLineChart() {
         const data = processData(this.props.data);
-        console.log(data);
 
         let sensorValues = [];
         sensors.forEach(s => {
@@ -136,6 +143,7 @@ class Visualization extends React.Component {
             .call(d3.axisLeft(y));
 
 
+        // Clip window
         svg.append("defs").append("SVG:clipPath")
             .attr("id", "clip")
             .append("SVG:rect")
@@ -144,7 +152,6 @@ class Visualization extends React.Component {
             .attr("x", 0)
             .attr("y", 0);
 
-        // Create the scatter variable: where both the circles and the brush take place
         let paths = svg.append('g')
             .attr("clip-path", "url(#clip)");
 
@@ -164,7 +171,7 @@ class Visualization extends React.Component {
                 .data(data)
                 .join("stop")
                 .attr("offset", d => x(d["isoDateTime"]) / width)
-                .attr("stop-color", d => colors[s](d.condition));
+                .attr("stop-color", d => colorScales[s](d.condition));
 
             paths.append("path")
                 .datum(data)
@@ -192,7 +199,7 @@ class Visualization extends React.Component {
                 paths.select(`#linear-gradient-${s}`)
                     .selectAll("stop")
                     .attr("offset", d => newX(d["isoDateTime"]) / width)
-                    .attr("stop-color", d => colors[s](d.condition));
+                    .attr("stop-color", d => colorScales[s](d.condition));
 
                 paths.select(`#path-${s}`)
                     .attr("d", line);
@@ -200,10 +207,17 @@ class Visualization extends React.Component {
         }
     }
 
+    changeColors(sensor, color) {
+        colorScales[sensor] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, color]);
+        d3.select(`#linear-gradient-${sensor}`)
+            .selectAll("stop")
+            .attr("stop-color", d => colorScales[sensor](d.condition));
+    }
+
     displayOptions(checkBoxes) {
         if (this.props.displayOptions) {
             return (
-                <div className="options ml-5 mb-4">
+                <div className="options ml-5 mt-5">
                     {checkBoxes}
                 </div>
             )
@@ -219,24 +233,14 @@ class Visualization extends React.Component {
     render() {
         let checkBoxes = [];
         sensors.forEach((s, i) => {
-            checkBoxes.push(
-                <Form.Check
-                    inline
-                    defaultChecked
-                    custom
-                    onClick={e => this.showSensor(e.target)}
-                    key={`${s}`}
-                    type={"checkbox"}
-                    id={`${s}`}
-                    label={`Sensor ${i + 1}`}
-                />
-            )
+            checkBoxes.push(<SensorOptions sensor={s} color={colors[s]} key={i} showSensor={this.showSensor}
+                                           changeColors={this.changeColors}/>);
         });
+
         return (
             <React.Fragment>
-                {this.displayOptions(checkBoxes)}
                 <svg ref={eeg => this.eeg = eeg} width="100%" height={300}/>
-                <div id="dataviz_axisZoom"></div>
+                {this.displayOptions(checkBoxes)}
             </React.Fragment>
         )
     }

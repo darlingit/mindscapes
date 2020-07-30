@@ -440,3 +440,16 @@ input[type=checkbox] {
   border-color: var(--accent-color);
   background-color: var(--accent-color);
 }
+
+.form-color {
+  cursor: pointer;
+  margin-top: -2px;
+  border: none;
+  width: 5%;
+  height: 25px;
+  padding: 0;
+}
+
+.form-color:focus {
+  box-shadow: none;
+}
