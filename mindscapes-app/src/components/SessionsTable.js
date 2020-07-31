@@ -25,11 +25,19 @@ class SessionsTable extends React.Component {
 
     async getData() {
         try {
-            const sessions = await getAllSessions();
-            this.setState({
-                items: sessions,
-                isLoading: false,
-            })
+            const res = await getAllSessions();
+            if (res.response.status === 200) {
+                this.setState({
+                    items: res.body,
+                    isLoading: false,
+                })
+            } else {
+                this.setState({
+                    error: res.response.statusText,
+                    isLoading: false,
+                })
+            }
+
 
 
         } catch (error) {
@@ -39,7 +47,7 @@ class SessionsTable extends React.Component {
 
     handleItems(items) {
         let components = [];
-        if (!this.state.isLoading) {
+        if (!this.state.isLoading && !this.state.error) {
             items.map((element) =>
                 components.push(
                     <SessionItem

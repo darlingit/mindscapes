@@ -263,9 +263,16 @@ class Visualization extends React.Component {
     async updateDesign(event) {
         event.preventDefault();
         try {
-            await updateDesign(this.state.sessionName, this.state.pathDesign);
-            window.scrollTo(0, 0);
-            this.props.handleUpdate("success");
+            const res = await updateDesign(this.state.sessionName, this.state.pathDesign);
+            if (res.response.status === 200) {
+                window.scrollTo(0, 0);
+                this.props.handleUpdate("success");
+            } else {
+                this.setState({
+                    error: res.response.statusText,
+                })
+            }
+
         } catch (error) {
             console.log(error);
         }

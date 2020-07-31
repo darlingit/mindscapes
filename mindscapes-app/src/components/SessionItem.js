@@ -16,9 +16,17 @@ class SessionItem extends React.Component {
 
     async handleDelete() {
         try {
-            console.log(this.state.session);
-            await deleteSession(this.state.session._id);
-            this.props.handleSessionDelete(this.state.session);
+            const res = await deleteSession(this.state.session._id);
+            if (res.response.status === 200) {
+                this.setState({
+                    success: true,
+                });
+                this.props.handleSessionDelete(this.state.session);
+            } else {
+                this.setState({
+                    error: res.response.statusText,
+                })
+            }
         } catch (error) {
             console.log(error);
         }

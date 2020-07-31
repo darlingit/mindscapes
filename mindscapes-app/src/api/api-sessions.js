@@ -17,7 +17,8 @@ const readUploadedFileAsText = (inputFile) => {
 
 const getAllSessions = async() => {
     const response = await fetch(`/api/sessions`);
-    return await response.json();
+    const body = await response.json();
+    return {response, body};
 }
 
 const deleteSession = async(sessionId) => {
@@ -27,7 +28,8 @@ const deleteSession = async(sessionId) => {
         headers: {
         'Content-Type': 'application/json',
         }});
-    return await response.json();
+    const body = await response.json();
+    return {response, body};
 }
 
 const postSession = async(form) => {
@@ -53,7 +55,8 @@ const postSession = async(form) => {
             'Content-Type': 'application/json',
         }
     });
-    return await response.json();
+    const body = await response.json();
+    return {response, body};
 }
 
 const updateDesign = async(sessionName, design) => {
@@ -64,7 +67,8 @@ const updateDesign = async(sessionName, design) => {
             'Content-Type': 'application/json',
         }
     });
-    return await response.json();
+    const body = await response.json();
+    return {response, body};
 }
 
 export {getAllSessions, postSession, deleteSession, updateDesign};

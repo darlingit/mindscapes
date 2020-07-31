@@ -4,7 +4,7 @@ import { MongoClient, ObjectID } from 'mongodb';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '16mb', extended: true}));
 
 async function withDB(operations, res) {
     try {

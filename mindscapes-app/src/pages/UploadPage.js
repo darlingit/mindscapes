@@ -7,7 +7,7 @@ class UploadPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            success: false,
+            isLoading: true,
             buttonDisabled: true,
             form: {
                 sessionName: "",
@@ -18,6 +18,8 @@ class UploadPage extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateState = this.updateState.bind(this);
+        this.displayNotifications = this.displayNotifications.bind(this);
+
     }
 
     handleChange(event) {
@@ -27,13 +29,22 @@ class UploadPage extends React.Component {
     async handleSubmit(event) {
         event.preventDefault();
         try {
-            const sessionPosted = await postSession(this.state.form);
-            this.setState({
-                sessionPosted: sessionPosted,
-                success: true,
-            })
+            const res = await postSession(this.state.form);
+            const sessionPosted = res.body;
+            console.log(res);
+            if (res.response.status === 200) {
+                this.setState({
+                    sessionPosted: sessionPosted,
+                    isLoading: false,
+                })
+            } else {
+                this.setState({
+                    error: res.response.statusText,
+                    isLoading: false,
+                })
+            }
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     }
 
@@ -57,16 +68,28 @@ class UploadPage extends React.Component {
         this.checkCompleted(json.form);
     }
 
+    displayNotifications() {
+        if (this.state.error) {
+            window.scrollTo(0, 0);
+            return (
+                <div className="notification">
+                    <p>Error: {this.state.error}</p>
+                </div>
+            );
+        }
+    }
 
     render() {
-        if (this.state.success) {
-            return (<Redirect to={{pathname: '/gallery', state: {notification: "success", session: this.state.sessionPosted}}}/>)
+        if (this.state.sessionPosted && !this.state.error) {
+            return (<Redirect
+                to={{pathname: '/gallery', state: {notification: "success", session: this.state.sessionPosted}}}/>)
         } else {
             return (
                 <>
                     <div className="pt-2 pb-2 mb-3">
                         <h2>Upload new session</h2>
                     </div>
+                    {this.displayNotifications()}
                     <div className="content p-3">
                         <form className="mt-5" onSubmit={this.handleSubmit}>
                             <div className="form-group mt-5">
@@ -90,7 +113,6 @@ class UploadPage extends React.Component {
                 </>
             );
         }
-
     }
 }
 
