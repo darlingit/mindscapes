@@ -49,7 +49,7 @@ class GalleryPage extends React.Component {
                 </div>
                 <div className="content p-3">
                     {this.displayNotifications()}
-                    {/*<h3 className="mt-3">Folders</h3>*/}
+                    {/*<h3 className="mt-3 mb-3">Folders</h3>*/}
                     {/*<div className="folders d-flex mt-4">*/}
                     {/*    <Folder folderName={"Folder A"} info={"234 files"} />*/}
                     {/*    <Folder folderName={"Folder B"} info={"2 files"} />*/}
@@ -58,7 +58,7 @@ class GalleryPage extends React.Component {
                     {/*    <Folder folderName={"Folder E"} info={"2 files"} />*/}
                     {/*</div>*/}
 
-                    <h3 className="mt-6">Sessions</h3>
+                    <h3 className="mt-3">Sessions</h3>
                     <SessionsTable handleSessionDelete={this.handleDelete} />
                 </div>
             </>
