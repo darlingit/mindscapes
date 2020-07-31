@@ -492,3 +492,13 @@ form.options {
   width: 90%;
 }
 
+.brush-path {
+  stroke: var(--main-text-color);
+}
+
+.selection {
+  stroke: var(--accent-color);
+  stroke-width: 2px;
+  fill-opacity: 0.1;
+}
+

@@ -114,15 +114,21 @@ class Visualization extends React.Component {
 
         const svgWidth = this.eeg.clientWidth;
         const svgHeight = this.eeg.clientHeight;
-        const margin = {top: 10, right: 30, bottom: 30, left: 50},
+        const margin2 = {top: 300, right: 20, bottom: 60, left: 40};
+        const margin = {top: 10, right: 20, bottom: 130, left: 40},
             width = svgWidth - margin.left - margin.right,
             height = svgHeight - margin.top - margin.bottom;
+        const height2 = margin2.bottom;
 
         const eegSvg = this.eeg;
 
 
+        let brush = d3.brushX()
+            .extent([[0, 0], [width, height2]])
+            .on("brush end", brushed);
+
         let zoom = d3.zoom()
-            .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+            .scaleExtent([1, 20])
             .extent([[0, 0], [width, height]])
             .on("zoom", updateChart);
 
@@ -131,19 +137,20 @@ class Visualization extends React.Component {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        svg.append("rect").attr("width", width)
+        svg.append("rect").attr("class", "zoom")
+            .attr("width", width)
             .attr("height", height)
             .style("fill", "none")
             .style("pointer-events", "all")
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
             .call(zoom);
-        // svg.call(d3.brush().extent([[0, 0], [width, height]]));
 
         // X axis
         let x = d3.scaleTime()
             .domain(d3.extent(data, d => d["isoDateTime"]))
             .range([0, width]);
         let xAxis = svg.append("g")
+            .attr("class", "axis axis-x")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
 
@@ -154,6 +161,22 @@ class Visualization extends React.Component {
         svg.append("g")
             .call(d3.axisLeft(y));
 
+        // Brush chart
+        let context = svg.append("g")
+            .attr("class", "context")
+            .attr("transform", "translate(0," + margin2.top + ")");
+
+        let x2 = d3.scaleTime()
+            .domain(x.domain())
+            .range([0, width]);
+        let y2 = d3.scaleLinear()
+            .domain(y.domain())
+            .range([height2, 0]);
+
+        context.append("g")
+            .attr("class", "axis axis-x")
+            .attr("transform", "translate(0," + height2 + ")")
+            .call(d3.axisBottom(x2));
 
         // Clip window
         svg.append("defs").append("SVG:clipPath")
@@ -174,6 +197,10 @@ class Visualization extends React.Component {
             colorScales[s] = d3.scaleOrdinal(["DERIVED", "ORG"], [colors.derived, colors[s]])
         });
 
+        context.append("g")
+            .attr("class", "brush")
+            .call(brush)
+            .call(brush.move, x2.range());
 
         // Path
         sensors.forEach(s => {
@@ -181,6 +208,18 @@ class Visualization extends React.Component {
                 .curve(d3.curveStep)
                 .x(d => x(d["isoDateTime"]))
                 .y(d => y(d[s]));
+
+            let line2 = d3.line()
+                .curve(d3.curveStep)
+                .x(function (d) { return x2(d["isoDateTime"]); })
+                .y(function (d) { return y2(d[s]); });
+
+            context.append("path")
+                .datum(data)
+                .attr("class", "brush-path")
+                .attr("fill", "none")
+                .attr("stroke-width", 2)
+                .attr("d", line2);
 
             paths.append("linearGradient")
                 .attr("id", `linear-gradient-${s}`)
@@ -205,6 +244,30 @@ class Visualization extends React.Component {
                 .attr("d", line);
         });
 
+        function brushed() {
+            if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+            let s = d3.event.selection || x2.range();
+            x.domain(s.map(x2.invert, x2));
+
+            sensors.forEach(s => {
+                let line = d3.line()
+                    .curve(d3.curveStep)
+                    .x(d => x(d["isoDateTime"]))
+                    .y(d => y(d[s]));
+
+                paths.select(`#linear-gradient-${s}`)
+                    .selectAll("stop")
+                    .attr("offset", d => x(d["isoDateTime"]) / width)
+                    .attr("stop-color", d => colorScales[s](d.condition));
+
+                paths.select(`#path-${s}`)
+                    .attr("d", line);
+            });
+            // paths.select(".axis-x").call(xAxis);
+            // svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+            //     .scale(width / (s[1] - s[0]))
+            //     .translate(-s[0], 0));
+        }
 
         function updateChart() {
             let newX = d3.event.transform.rescaleX(x);
@@ -323,7 +386,7 @@ class Visualization extends React.Component {
 
         return (
             <React.Fragment>
-                <svg ref={eeg => this.eeg = eeg} width="100%" height={300}/>
+                <svg ref={eeg => this.eeg = eeg} width="100%" height={400}/>
                 {this.displayOptions(checkBoxes)}
             </React.Fragment>
         )
