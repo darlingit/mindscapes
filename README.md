@@ -39,3 +39,11 @@ cd mindscapes-app
 npm start
 ```
 
+##To Do:
+- Change limit of payload in the db
+- Implement folder structure
+- Fix active tab indicator on sidebar (example: gallery tab should still be active when on session page)
+- Add loading indicators while connecting with backend server (loading spinners)
+- Clean up survey data 
+- Add security (login, authorisation)
+

@@ -4,6 +4,7 @@ import { MongoClient, ObjectID } from 'mongodb';
 
 const app = express();
 
+//TODO: change limit of uploading files to mongoDB
 app.use(bodyParser.json({limit: '16mb', extended: true}));
 
 async function withDB(operations, res) {
