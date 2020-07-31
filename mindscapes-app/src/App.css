@@ -228,12 +228,14 @@ td a:hover {
   font-weight: 700;
   color: var(--card-bg-color);
   text-transform: uppercase;
+  border: none;
   /*border: 1px solid var(--main-text-color);*/
 }
 
 .btn-main:hover {
   color: var(--card-bg-color);
   background-color: var(--hover-color);
+  border: none;
 }
 
 .btn-main:focus {
@@ -255,6 +257,7 @@ td a:hover {
 .btn-upload:hover {
   color: var(--card-bg-color);
   background-color: var(--accent-color);
+  border: 1px solid var(--accent-color);
 }
 
 form {

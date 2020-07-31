@@ -62,16 +62,13 @@ class SensorOptions extends React.Component {
                     id={`${this.state.sensor}`}
                     label={`Sensor ${this.state.sensor.slice(-1)}`}
                 />
-                <div>
-                    <div className="swatch" onClick={this.handleClick}>
-                        <div style={styles.colorPicker}/>
-                    </div>
-                    {this.state.displayColorPicker ? <div style={styles.popover}>
-                        <div className="cover" onClick={this.handleClose}/>
-                        <ChromePicker color={this.state.color} onChange={this.handleColorChange}/>
-                    </div> : null}
-
+                <div className="swatch" onClick={this.handleClick}>
+                    <div style={styles.colorPicker}/>
                 </div>
+                {this.state.displayColorPicker ? <div style={styles.popover}>
+                    <div className="cover" onClick={this.handleClose}/>
+                    <ChromePicker color={this.state.color} onChange={this.handleColorChange}/>
+                </div> : null}
             </Form.Group>
         );
     }

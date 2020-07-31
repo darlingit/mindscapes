@@ -1,7 +1,7 @@
 import React from "react";
 import * as d3 from 'd3';
 import SensorOptions from "./SensorOptions";
-import {Col, Form, Row, Button} from "react-bootstrap";
+import {Col, Form, Row} from "react-bootstrap";
 import {updateDesign} from "../api/api-sessions";
 
 const sensors = ["eeg_1", "eeg_2", "eeg_3", "eeg_4"];
@@ -46,8 +46,6 @@ function processData(data) {
                 d[s] = dIndex === 0 ? delta[s] : (parseFloat(data[dIndex - 1][s]) + delta[s])
             });
 
-            // console.log("Closest full to: " + dIndex + " is: " + nearestFullIndex);
-            // console.log(delta);
         } else {
             lastFull = {orgIndex: dIndex};
             sensors.forEach(s => {
@@ -246,8 +244,8 @@ class Visualization extends React.Component {
 
         function brushed() {
             if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
-            let s = d3.event.selection || x2.range();
-            x.domain(s.map(x2.invert, x2));
+            let selection = d3.event.selection || x2.range();
+            x.domain(selection.map(x2.invert, x2));
 
             sensors.forEach(s => {
                 let line = d3.line()
@@ -263,15 +261,11 @@ class Visualization extends React.Component {
                 paths.select(`#path-${s}`)
                     .attr("d", line);
             });
-            // paths.select(".axis-x").call(xAxis);
-            // svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
-            //     .scale(width / (s[1] - s[0]))
-            //     .translate(-s[0], 0));
         }
 
         function updateChart() {
             let newX = d3.event.transform.rescaleX(x);
-            xAxis.call(d3.axisBottom(newX))
+            xAxis.call(d3.axisBottom(newX));
 
             sensors.forEach(s => {
                 let line = d3.line()
@@ -362,10 +356,18 @@ class Visualization extends React.Component {
                         </Col>
                     </Row>
                     <Row className="d-flex">
-                        <Button type="submit" className="btn btn-main mt-2 ml-auto" variant="main">
-                            Save changes
-                        </Button>
+                        <div id="generate-buttons" className="ml-auto mt-2">
+                            <a id="imgLink" href="" style={{display: "none"}} download="svg_snapshot">link</a>
+                            <button className="btn btn-upload mr-3" onClick={this.generateDownloadLink}>
+                                Generate svg file
+                            </button>
+                            <button type="submit" className="btn btn-main ml-auto">
+                                Save changes
+                            </button>
+                        </div>
+
                     </Row>
+
                 </Form>
             )
         }
@@ -375,6 +377,37 @@ class Visualization extends React.Component {
         let opacity = checkbox.checked ? 1 : 0;
         d3.select(`#path-${checkbox.id}`).style("opacity", opacity);
     }
+
+    generateDownloadLink(e) {
+        e.preventDefault();
+
+        //get svg element.
+        let svg = document.getElementById("svg");
+
+        //get svg source.
+        let serializer = new XMLSerializer();
+        let source = serializer.serializeToString(svg);
+
+
+        //add name spaces.
+        if(!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)){
+            source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        if(!source.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)){
+            source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+        }
+
+        //add xml declaration
+        source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+
+        //convert svg source to URI data scheme.
+        let url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
+
+        let link = document.getElementById("imgLink");
+        link.href = url;
+        link.click();
+
+    };
 
 
     render() {
@@ -386,7 +419,7 @@ class Visualization extends React.Component {
 
         return (
             <React.Fragment>
-                <svg ref={eeg => this.eeg = eeg} width="100%" height={400}/>
+                <svg id="svg" ref={eeg => this.eeg = eeg} width="100%" height={400}/>
                 {this.displayOptions(checkBoxes)}
             </React.Fragment>
         )
